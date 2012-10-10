@@ -4,7 +4,8 @@
   "dependencies": {
     "express": "3.0.0rc1",
     "jade": "*",
-    "stylus": "*"
+    "stylus": "*",
+	"mongodb": "*"
   },
   "engines": {
     "node": "0.8.x",
