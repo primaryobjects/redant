@@ -2,5 +2,32 @@ extends layout
 
 block content
 	div.container
-		h1 Program Name
-		p Hello World
+		h1 RedAnt
+		p A web service developed with Node.js and Mongo db.
+
+		h3 Description
+		.well
+			p A Node.js REST service for saving/loading JSON in MongoDb. Created as part of the 2012 AP Technology Summit.
+
+		h3 Why "Red Ant"?
+		.well
+			p Red ants are one of the largest types of ants on the US east coast. They're extremely strong, fast, and can even bite you if you let them. On a sunny day, you can find a red ant colony carrying all types of debris, food, and dead insects into their nest, stashing them away for a rainy day.		
+			p Likewise (or maybe not, but let's just go with it), the Red Ant service is a Node.js RESTful service that stores and retrieves data to a Mongo database. Any type of data may be stored in JSON format, by simply posting the data to the designated URI /v1/nest
+
+		h3 API
+		.well
+			p The API methods are included below and follow the traditional REST interface. You can test the methods using any RESTful client, such as the Advanced REST client app for Google Chrome.
+
+		h3 Loading Data
+		.well
+			p GET /v1/nest/[objectId]
+
+		h3 Saving Data
+		.well
+			p POST /v1/nest
+			p (include JSON post data in the request, any format, the entire object will be stored)
+
+		h3 Updating Data
+		.well
+			p PUT /v1/nest/[objectId]
+			p (include JSON post data in the request, any format, the entire object will be replaced)

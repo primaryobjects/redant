@@ -6,6 +6,7 @@
 var express = require('express')
   , routes = require('./routes')
   , nest = require('./routes/nest')
+  , appl = require('./routes/appl')
   , http = require('http')
   , path = require('path');
 
@@ -34,6 +35,8 @@ app.get('/', routes.index);
 app.get('/v1/nest/:itemId', nest.get);
 app.put('/v1/nest/:itemId', nest.update);
 app.post('/v1/nest', nest.insert);
+app.get('/v1/appl/:value', appl.getItemId);
+app.get('/v1/appl/city/:value', appl.getCity);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
