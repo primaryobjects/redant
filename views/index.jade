@@ -25,9 +25,19 @@ block content
 		h3 Saving Data
 		.well
 			p POST /v1/nest
-			p (include JSON post data in the request, any format, the entire object will be stored)
+			p Include JSON post data in the request, any format, the entire object will be stored. Example:
+			p.text-success Content-type: application/json
+			p.text-success Data: {"personId":"12345", "Name":"Frank", "Age":"34", "Region":"US-East"}
 
 		h3 Updating Data
 		.well
 			p PUT /v1/nest/[objectId]
-			p (include JSON post data in the request, any format, the entire object will be replaced)
+			p Include JSON post data in the request, any format, the entire object will be replaced. Example:
+			p.text-success Content-type: application/json
+			p.text-success Data: {"personId":"12345", "name":"Frank", "age":"35", "region":"US-West"}
+
+		h3 Searching
+		.well
+			p GET /v1/nest/find?q={"key":"value"}
+			p The querystring parameter 'q' is a JSON string, used for searching in the Mongo database. Example:
+			p.text-success /v1/nest/find?q={"name":"Frank"}

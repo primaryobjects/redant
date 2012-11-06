@@ -1,6 +1,7 @@
 ﻿var mongo = require('mongodb'),
     config = require('../../config/config'),
-    managers = require('../../managers/commonManager');
+    managers = require('../../managers/commonManager'),
+    util = require('util');
 
 exports.get = function (req, res) {
     // Open connection.
@@ -34,6 +35,43 @@ exports.get = function (req, res) {
                 // Database error.
                 CommonManager.sendError(res, err.message);
             }
+        });
+    });
+}
+
+exports.find = function (req, res) {
+    // Open connection.
+    mongo.connect(config.mongo.connectionString, function (err, connection) {
+        var q = req.query['q'].toString();
+        var query;
+
+        try {
+            // Try parsing the JSON object.
+            query = JSON.parse(q);
+        }
+        catch (err) {
+            // Invalid JSON.
+            CommonManager.sendError(res, 'Invalid JSON object passed in query: ' + q + '. ' + err.message);
+            return;
+        }
+
+        // Get collection.
+        connection.collection('nest', function (err, collection) {
+            collection.find(query).toArray(function (err, items) {
+                if (!err && items != null) {
+                    console.log('Found ' + items.length + ' records.');
+                    res.send(JSON.stringify(items));
+                }
+                else {
+                    // No document found.
+                    res.writeHead(404, {
+                        "Content-Type": "application/json",
+                        "Access-Control-Allow-Origin": "*"
+                    });
+
+                    res.end(JSON.stringify({ error: 'No records found.' }));
+                }
+            });
         });
     });
 }
