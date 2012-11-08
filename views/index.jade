@@ -18,26 +18,50 @@ block content
 		.well
 			p The API methods are included below and follow the traditional REST interface. You can test the methods using any RESTful client, such as the Advanced REST client app for Google Chrome.
 
-		h3 Loading Data
+		h3 Read
 		.well
 			p GET /v1/nest/[objectId]
 
-		h3 Saving Data
+		h3 Insert
 		.well
 			p POST /v1/nest
 			p Include JSON post data in the request, any format, the entire object will be stored. Example:
 			p.text-success Content-type: application/json
 			p.text-success Data: {"personId":"12345", "Name":"Frank", "Age":"34", "Region":"US-East"}
 
-		h3 Updating Data
+		h3 Update
 		.well
 			p PUT /v1/nest/[objectId]
 			p Include JSON post data in the request, any format, the entire object will be replaced. Example:
 			p.text-success Content-type: application/json
 			p.text-success Data: {"personId":"12345", "name":"Frank", "age":"35", "region":"US-West"}
 
-		h3 Searching
+		h3 Search
 		.well
 			p GET /v1/nest/find?q={"key":"value"}
 			p The querystring parameter 'q' is a JSON string, used for searching in the Mongo database. Example:
 			p.text-success /v1/nest/find?q={"name":"Frank"}
+
+		h3 Ajax and JSONP
+		.well
+			p JSONP support is included for AJAX calls. Example:
+			a#getLink(href='#') AJAX JSONP GET Example
+			#div1
+				-
+
+block footer
+	script(type='text/javascript')
+		$(function() {
+			$('#getLink').click(function() {
+				$.ajax({
+					url: '/v1/nest/50992aad3da9f96c10000003',
+					crossDomain: true,
+					dataType: 'jsonp',
+					success: function(data) {
+						$('#div1').text(JSON.stringify(data));
+					}
+				});
+
+				return false;
+			});
+		});

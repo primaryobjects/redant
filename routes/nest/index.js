@@ -13,21 +13,11 @@ exports.get = function (req, res) {
                 collection.findOne({ '_id': new mongo.ObjectID(req.params.itemId) }, function (err, document) {
                     // Verify we have a document.
                     if (!err && document != null) {
-                        res.writeHead(200, {
-                            "Content-Type": "application/json",
-                            "Access-Control-Allow-Origin": "*"
-                        });
-
-                        res.end(JSON.stringify(document));
+                        res.json(document);
                     }
                     else {
                         // No document found.
-                        res.writeHead(404, {
-                            "Content-Type": "application/json",
-                            "Access-Control-Allow-Origin": "*"
-                        });
-
-                        res.end(JSON.stringify({ error: 'ID not found.', id: req.params.itemId }));
+                        res.json({ error: 'ID not found.', id: req.params.itemId }, 404);
                     }
                 });
             }
@@ -60,16 +50,11 @@ exports.find = function (req, res) {
             collection.find(query).toArray(function (err, items) {
                 if (!err && items != null) {
                     console.log('Found ' + items.length + ' records.');
-                    res.send(JSON.stringify(items));
+                    res.json(items);
                 }
                 else {
                     // No document found.
-                    res.writeHead(404, {
-                        "Content-Type": "application/json",
-                        "Access-Control-Allow-Origin": "*"
-                    });
-
-                    res.end(JSON.stringify({ error: 'No records found.' }));
+                    res.json({ error: 'No records found.' }, 404);
                 }
             });
         });
@@ -93,12 +78,7 @@ exports.insert = function (req, res) {
                             // Insert the new item.
                             collection.insert(json, { safe: true }, function (err) {
                                 // Success.
-                                res.writeHead(200, {
-                                    "Content-Type": "application/json",
-                                    "Access-Control-Allow-Origin": "*"
-                                });
-
-                                res.end(JSON.stringify(json));
+                                res.json(json);
                             });
                         }
                         catch (err) {
@@ -131,12 +111,7 @@ exports.update = function (req, res) {
                                 // Verify a document was updated by checking the count.
                                 if (!err && count > 0) {
                                     // Success.
-                                    res.writeHead(200, {
-                                        "Content-Type": "application/json",
-                                        "Access-Control-Allow-Origin": "*"
-                                    });
-
-                                    res.end(JSON.stringify({ document: json, updated: count }));
+                                    res.json({ document: json, updated: count });
                                 }
                                 else {
                                     // Error, check if it's a database error or just no records updated.
@@ -146,12 +121,7 @@ exports.update = function (req, res) {
                                     }
                                     else {
                                         // No records updated.
-                                        res.writeHead(404, {
-                                            "Content-Type": "application/json",
-                                            "Access-Control-Allow-Origin": "*"
-                                        });
-
-                                        res.end(JSON.stringify({ error: 'No record updated', id: req.params.itemId }));
+                                        res.json({ error: 'No record updated', id: req.params.itemId }, 404);
                                     }
                                 }
                             });
