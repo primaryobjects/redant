@@ -45,6 +45,7 @@ block content
 		h3 Ajax and JSONP
 		.well
 			p JSONP support is included for AJAX calls. Example:
+			p http://red-ant.herokuapp.com/v1/nest/find?q={"name":"Frank"}&callback=myCallbackFunc
 			a#getLink(href='#') AJAX JSONP GET Example
 			#div1
 				-
@@ -54,7 +55,7 @@ block footer
 		$(function() {
 			$('#getLink').click(function() {
 				$.ajax({
-					url: '/v1/nest/50992aad3da9f96c10000003',
+					url: '/v1/nest/find?q={"name":"Frank"}',
 					crossDomain: true,
 					dataType: 'jsonp',
 					success: function(data) {
