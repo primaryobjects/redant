@@ -77,70 +77,128 @@ exports.find = function (req, res) {
 }
 
 exports.insert = function (req, res) {
-    // Open connection.
-    mongo.connect(config.mongo.connectionString, function (err, connection) {
-        // Get collection.
-        connection.collection('nest', function (err, collection) {
-            try {
-                // Insert the new item.
-                collection.insert(req.body, { safe: true }, function (err) {
-                    // Success.
-                    res.writeHead(200, {
-                        "Content-Type": "application/json",
-                        "Access-Control-Allow-Origin": "*"
-                    });
+    var q = '';
+    var query;
 
-                    res.end(JSON.stringify(req.body));
-                });
-            }
-            catch (err) {
-                // Database error.
-                CommonManager.sendError(res, err.message);
-            }
-        });
+    req.on('data', function (data) {
+        if (q.length > 1e6) {
+            // Flood attack or faulty client, nuke request.
+            res.writeHead(413, {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*"
+            });
+
+            res.end(JSON.stringify({ error: 'Request entity too large.' }));
+        }
+
+        q += data;
     });
-};
 
-exports.update = function (req, res) {
-    // Open connection.
-    mongo.connect(config.mongo.connectionString, function (err, connection) {
-        // Get the collection.
-        connection.collection('nest', function (err, collection) {
-            try {
-                // Update the record matching id.
-                collection.update({ '_id': new mongo.ObjectID(req.params.itemId) }, req.body, { safe: true, multi: false }, function (err, count) {
-                    // Verify a document was updated by checking the count.
-                    if (!err && count > 0) {
+    req.on('end', function () {
+        try {
+            // Try parsing the JSON object.
+            query = JSON.parse(q);
+        }
+        catch (err) {
+            // Invalid JSON.
+            CommonManager.sendError(res, 'Invalid JSON object passed in query: ' + q + '. ' + err.message);
+            return;
+        }
+
+        // Open connection.
+        mongo.connect(config.mongo.connectionString, function (err, connection) {
+            // Get collection.
+            connection.collection('nest', function (err, collection) {
+                try {
+                    // Insert the new item.
+                    collection.insert(query, { safe: true }, function (err) {
                         // Success.
                         res.writeHead(200, {
                             "Content-Type": "application/json",
                             "Access-Control-Allow-Origin": "*"
                         });
 
-                        res.end(JSON.stringify({ document: req.body, updated: count }));
-                    }
-                    else {
-                        // Error, check if it's a database error or just no records updated.
-                        if (err != null) {
-                            // Error during update.
-                            CommonManager.sendError(res, err.message);
-                        }
-                        else {
-                            // No records updated.
-                            res.writeHead(404, {
+                        res.end(JSON.stringify(query));
+                    });
+                }
+                catch (err) {
+                    // Database error.
+                    CommonManager.sendError(res, err.message);
+                }
+            });
+        });
+    });
+};
+
+exports.update = function (req, res) {
+    var q = '';
+    var query;
+
+    req.on('data', function (data) {
+        if (q.length > 1e6) {
+            // Flood attack or faulty client, nuke request.
+            res.writeHead(413, {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*"
+            });
+
+            res.end(JSON.stringify({ error: 'Request entity too large.' }));
+        }
+
+        q += data;
+    });
+
+    req.on('end', function () {
+        try {
+            // Try parsing the JSON object.
+            query = JSON.parse(q);
+        }
+        catch (err) {
+            // Invalid JSON.
+            CommonManager.sendError(res, 'Invalid JSON object passed in query: ' + q + '. ' + err.message);
+            return;
+        }
+
+        // Open connection.
+        mongo.connect(config.mongo.connectionString, function (err, connection) {
+            // Get the collection.
+            connection.collection('nest', function (err, collection) {
+                try {
+                    // Update the record matching id.
+                    collection.update({ '_id': new mongo.ObjectID(req.params.itemId) }, query, { safe: true, multi: false }, function (err, count) {
+                        // Verify a document was updated by checking the count.
+                        if (!err && count > 0) {
+                            // Success.
+                            res.writeHead(200, {
                                 "Content-Type": "application/json",
                                 "Access-Control-Allow-Origin": "*"
                             });
 
-                            res.end(JSON.stringify({ error: 'No record updated', id: req.params.itemId }));
+                            res.end(JSON.stringify({ document: query, updated: count }));
                         }
-                    }
-                });
-            }
-            catch (err) {
-                // Database error.
-                CommonManager.sendError(res, err.message);
-            }
+                        else {
+                            // Error, check if it's a database error or just no records updated.
+                            if (err != null) {
+                                // Error during update.
+                                CommonManager.sendError(res, err.message);
+                            }
+                            else {
+                                // No records updated.
+                                res.writeHead(404, {
+                                    "Content-Type": "application/json",
+                                    "Access-Control-Allow-Origin": "*"
+                                });
+
+                                res.end(JSON.stringify({ error: 'No record updated', id: req.params.itemId }));
+                            }
+                        }
+                    });
+                }
+                catch (err) {
+                    // Database error.
+                    CommonManager.sendError(res, err.message);
+                }
+            });
         });
     });
 };
