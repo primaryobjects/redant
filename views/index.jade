@@ -36,11 +36,16 @@ block content
 			p.text-success Content-type: application/json
 			p.text-success Data: {"personId":"12345", "name":"Frank", "age":"35", "region":"US-West"}
 
+		h3 Delete
+		.well
+			p DELETE /v1/nest/[objectId]
+
 		h3 Search
 		.well
 			p GET /v1/nest/find?q={"key":"value"}
-			p The querystring parameter 'q' is a JSON string, used for searching in the Mongo database. Example:
+			p The querystring parameter 'q' is a JSON string, used for searching in the Mongo database. Simple regular expressions may be used for LIKE searches. Example:
 			p.text-success /v1/nest/find?q={"name":"Frank"}
+			p.text-success /v1/nest/find?q={ "name" : "/Fr/" }
 
 		h3 Ajax and JSONP
 		.well
