@@ -1,7 +1,8 @@
 ﻿var mongo = require('mongodb'),
     config = require('../../config/config'),
     managers = require('../../managers/commonManager'),
-    util = require('util');
+    util = require('util'),
+    easypost = require('easypost');
 
 exports.get = function (req, res) {
     // Open connection.
@@ -91,7 +92,7 @@ exports.find = function (req, res) {
 
 exports.insert = function (req, res) {
     // Read post data.
-    CommonManager.getPostData(req, res, function (data) {
+    easypost.get(req, res, function (data) {
         // Parse the JSON object.
         CommonManager.tryParseJson(data, function (json, err) {
             if (err != null) {
@@ -122,7 +123,7 @@ exports.insert = function (req, res) {
 
 exports.update = function (req, res) {
     // Read post data.
-    CommonManager.getPostData(req, res, function (data) {
+    easypost.get(req, res, function (data) {
         // Parse the JSON object.
         CommonManager.tryParseJson(data, function (json, err) {
             if (err != null) {
