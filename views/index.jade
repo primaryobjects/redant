@@ -2,7 +2,12 @@ extends layout
 
 block content
 	div.container
-		h1 RedAnt
+		div#header(style='float: left; margin: 0 2px 0 0;')
+			h1 RedAnt
+		div#version
+			h6= version
+		div(style='clear: both;')
+
 		p A web service developed with Node.js and Mongo db.
 
 		h3 Description
