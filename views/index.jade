@@ -45,7 +45,12 @@ block content
 			p GET /v1/nest/find?q={"key":"value"}
 			p The querystring parameter 'q' is a JSON string, used for searching in the Mongo database. Simple regular expressions may be used for LIKE searches. Example:
 			p.text-success /v1/nest/find?q={"name":"Frank"}
+			p.muted Returns all records with key 'name' equal to 'Frank'
 			p.text-success /v1/nest/find?q={ "name" : "/Fr/" }
+			p.muted Returns all records with key 'name' containing 'Fr'
+			p.text-success /v1/nest/find?q={ "name" : "/" }
+			p.muted Returns all records with a key 'name'. This wildcard search may be used to return all records in a collection.
+
 
 		h3 Ajax and JSONP
 		.well
