@@ -51,5 +51,18 @@
             // Invalid JSON.
             onQuery(null, { message: 'Invalid JSON object passed in query: ' + query + '. ' + err.message });
         }
+    },
+
+    isScriptInjection: function (req, res, json) {
+        var result = false;
+
+        if (req.query['script'] != '1') {
+            // Enforce no script tags in json data, unless url contains ?script=1
+            if (JSON.stringify(json).toLowerCase().indexOf('<script>') != -1) {
+                result = true;
+            }
+        }
+
+        return result;
     }
 }

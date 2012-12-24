@@ -59,16 +59,22 @@ exports.insert = function (req, res) {
                 CommonManager.sendError(res, err.message);
             }
             else {
-                try {
-                    // Insert the new item.
-                    mongo.db(config.mongo.connectionString).collection('nest').insert(json, { safe: true }, function (err) {
-                        // Success.
-                        res.json(json);
-                    });
+                // Check for script injection in json, unless url contains ?script=1
+                if (CommonManager.isScriptInjection(req, res, json)) {
+                    CommonManager.sendError(res, 'Script tags are not allowed.');
                 }
-                catch (err) {
-                    // Database error.
-                    CommonManager.sendError(res, err.message);
+                else {
+                    try {
+                        // Insert the new item.
+                        mongo.db(config.mongo.connectionString).collection('nest').insert(json, { safe: true }, function (err) {
+                            // Success.
+                            res.json(json);
+                        });
+                    }
+                    catch (err) {
+                        // Database error.
+                        CommonManager.sendError(res, err.message);
+                    }
                 }
             }
         });
@@ -84,31 +90,36 @@ exports.update = function (req, res) {
                 CommonManager.sendError(res, err.message);
             }
             else {
-                try
-                {
-                    // Update the record matching id.
-                    mongo.db(config.mongo.connectionString).collection('nest').update({ '_id': new mongo.ObjectID(req.params.itemId) }, json, { safe: true, multi: false }, function (err, count) {
-                        // Verify a document was updated by checking the count.
-                        if (!err && count > 0) {
-                            // Success.
-                            res.json({ document: json, updated: count });
-                        }
-                        else {
-                            // Error, check if it's a database error or just no records updated.
-                            if (err != null) {
-                                // Error during update.
-                                CommonManager.sendError(res, err.message);
+                // Check for script injection in json, unless url contains ?script=1
+                if (CommonManager.isScriptInjection(req, res, json)) {
+                    CommonManager.sendError(res, 'Script tags are not allowed.');
+                }
+                else {
+                    try {
+                        // Update the record matching id.
+                        mongo.db(config.mongo.connectionString).collection('nest').update({ '_id': new mongo.ObjectID(req.params.itemId) }, json, { safe: true, multi: false }, function (err, count) {
+                            // Verify a document was updated by checking the count.
+                            if (!err && count > 0) {
+                                // Success.
+                                res.json({ document: json, updated: count });
                             }
                             else {
-                                // No records updated.
-                                res.json({ error: 'No record updated', id: req.params.itemId }, 404);
+                                // Error, check if it's a database error or just no records updated.
+                                if (err != null) {
+                                    // Error during update.
+                                    CommonManager.sendError(res, err.message);
+                                }
+                                else {
+                                    // No records updated.
+                                    res.json({ error: 'No record updated', id: req.params.itemId }, 404);
+                                }
                             }
-                        }
-                    });
-                }
-                catch (err) {
-                    // Database error.
-                    CommonManager.sendError(res, err.message);
+                        });
+                    }
+                    catch (err) {
+                        // Database error.
+                        CommonManager.sendError(res, err.message);
+                    }
                 }
             }
         });
