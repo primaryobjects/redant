@@ -33,11 +33,11 @@ app.configure('development', function(){
 
 app.get('/', routes.index);
 
-app.get('/v1/nest/find', nest.find);
-app.get('/v1/nest/:itemId', nest.get);
-app.put('/v1/nest/:itemId', nest.update);
-app.delete('/v1/nest/:itemId', nest.delete);
-app.post('/v1/nest', nest.insert);
+app.get('/v1/:collection/find', nest.find);
+app.get('/v1/:collection/:itemId', nest.get);
+app.put('/v1/:collection/:itemId', nest.update);
+app.delete('/v1/:collection/:itemId', nest.delete);
+app.post('/v1/:collection', nest.insert);
 app.get('/v1/appl/:value', appl.getItemId);
 app.get('/v1/appl/city/:value', appl.getCity);
 

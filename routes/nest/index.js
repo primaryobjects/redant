@@ -6,7 +6,7 @@
 exports.get = function (req, res) {
     try {
         // Select the item by id.
-        mongo.db(config.mongo.connectionString).collection('nest').findOne({ '_id': mongo.ObjectID.createFromHexString(req.params.itemId) }, function (err, document) {
+        mongo.db(config.mongo.connectionString).collection(req.params.collection).findOne({ '_id': mongo.ObjectID.createFromHexString(req.params.itemId) }, function (err, document) {
             // Verify we have a document.
             if (!err && document != null) {
                 res.json(document);
@@ -31,7 +31,7 @@ exports.find = function (req, res) {
         else {
             try {
                 // Get collection.
-                mongo.db(config.mongo.connectionString).collection('nest').find(query).toArray(function (err, items) {
+                mongo.db(config.mongo.connectionString).collection(req.params.collection).find(query).toArray(function (err, items) {
                     if (!err && items != null) {
                         console.log('Found ' + items.length + ' records.');
                         res.json(items);
@@ -66,7 +66,7 @@ exports.insert = function (req, res) {
                 else {
                     try {
                         // Insert the new item.
-                        mongo.db(config.mongo.connectionString).collection('nest').insert(json, { safe: true }, function (err) {
+                        mongo.db(config.mongo.connectionString).collection(req.params.collection).insert(json, { safe: true }, function (err) {
                             // Success.
                             res.json(json);
                         });
@@ -97,7 +97,7 @@ exports.update = function (req, res) {
                 else {
                     try {
                         // Update the record matching id.
-                        mongo.db(config.mongo.connectionString).collection('nest').update({ '_id': new mongo.ObjectID(req.params.itemId) }, json, { safe: true, multi: false }, function (err, count) {
+                        mongo.db(config.mongo.connectionString).collection(req.params.collection).update({ '_id': new mongo.ObjectID(req.params.itemId) }, json, { safe: true, multi: false }, function (err, count) {
                             // Verify a document was updated by checking the count.
                             if (!err && count > 0) {
                                 // Success.
@@ -129,7 +129,7 @@ exports.update = function (req, res) {
 exports.delete = function (req, res) {
     try {
         // Update the record matching id.
-        mongo.db(config.mongo.connectionString).collection('nest').remove({ '_id': mongo.ObjectID.createFromHexString(req.params.itemId) }, { safe: true, multi: false }, function (err, count) {
+        mongo.db(config.mongo.connectionString).collection(req.params.collection).remove({ '_id': mongo.ObjectID.createFromHexString(req.params.itemId) }, { safe: true, multi: false }, function (err, count) {
             // Verify a document was updated by checking the count.
             if (!err && count > 0) {
                 // Success.
